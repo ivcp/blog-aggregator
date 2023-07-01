@@ -25,9 +25,10 @@ func main() {
 		MaxAge:           300,
 	}))
 
-	apiRouter := chi.NewRouter()
-
-	router.Mount("/v01", apiRouter)
+	v1Router := chi.NewRouter()
+	v1Router.Get("/readiness", handlerReadiness)
+	v1Router.Get("/err", handlerError)
+	router.Mount("/v01", v1Router)
 
 	portString := os.Getenv("PORT")
 	if portString == "" {
