@@ -38,3 +38,19 @@ func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Reques
 
 	respondWithJSON(w, 201, databaseFeedToFeed(feed))
 }
+
+func (apiCfg *apiConfig) handlerGetAllFeeds(w http.ResponseWriter, r *http.Request) {
+	feeds, err := apiCfg.DB.GetAllFeeds(r.Context())
+	if err != nil {
+		respondWithError(w, 500, fmt.Sprintf("Coudn't get feeds: %s", err))
+		return
+	}
+
+	feedsResp := []Feed{}
+
+	for _, feed := range feeds {
+		feedsResp = append(feedsResp, databaseFeedToFeed(feed))
+	}
+
+	respondWithJSON(w, 201, feedsResp)
+}
