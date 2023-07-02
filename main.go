@@ -57,7 +57,10 @@ func main() {
 	v1Router := chi.NewRouter()
 	v1Router.Get("/readiness", handlerReadiness)
 	v1Router.Get("/err", handlerError)
+
 	v1Router.Post("/users", apiCfg.handlerCreateUser)
+	v1Router.Get("/users", apiCfg.handlerGetUser)
+
 	router.Mount("/v01", v1Router)
 
 	server := &http.Server{
