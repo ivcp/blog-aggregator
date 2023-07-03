@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
@@ -53,6 +54,8 @@ func main() {
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
+
+	go startScraping(queries, 10, time.Minute)
 
 	v1Router := chi.NewRouter()
 	v1Router.Get("/readiness", handlerReadiness)
