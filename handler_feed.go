@@ -35,8 +35,27 @@ func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Reques
 		respondWithError(w, 400, fmt.Sprintf("Could not create feed: %s", err))
 		return
 	}
+	feedFollow, err := apiCfg.DB.CreateFeedFollow(r.Context(), database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+	})
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("Could not create feed follow: %s", err))
+		return
+	}
 
-	respondWithJSON(w, 201, databaseFeedToFeed(feed))
+	type resp struct {
+		Feed       Feed       `json:"feed"`
+		FeedFollow FeedFollow `json:"feed_follow"`
+	}
+
+	respondWithJSON(w, 201, resp{
+		Feed:       databaseFeedToFeed(feed),
+		FeedFollow: databaseFeedFollowToFeedFollow(feedFollow),
+	})
 }
 
 func (apiCfg *apiConfig) handlerGetAllFeeds(w http.ResponseWriter, r *http.Request) {
